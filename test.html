@@ -1,0 +1,184 @@
+<h1 id="midterm-2-review">Midterm 2 Review</h1>
+<h2 id="adts">ADTs</h2>
+<p>Abstract Data Type</p>
+<ul>
+<li>Specification of data set and the operations on that data</li>
+<li>Does not indicate how to store the data or how to implement the operations</li>
+</ul>
+<hr>
+<h3 id="bag">Bag</h3>
+<p>Can be implemented using array or linked nodes.</p>
+<p>Interface methods:</p>
+<pre><code><span class="hljs-function"><span class="hljs-keyword">boolean</span> <span class="hljs-title">add</span><span class="hljs-params">(T entry)</span></span>;
+<span class="hljs-function">T <span class="hljs-title">remove</span><span class="hljs-params">()</span></span>;
+<span class="hljs-function">T <span class="hljs-title">remove</span><span class="hljs-params">(T entry)</span></span>;
+<span class="hljs-function"><span class="hljs-keyword">boolean</span> <span class="hljs-title">contains</span><span class="hljs-params">(T entry)</span></span>;
+<span class="hljs-function"><span class="hljs-keyword">boolean</span> <span class="hljs-title">isEmpty</span><span class="hljs-params">()</span></span>;
+<span class="hljs-function"><span class="hljs-keyword">boolean</span> <span class="hljs-title">isArrayFull</span><span class="hljs-params">()</span></span>;
+T[] toString();
+<span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">getFrequncyOf</span><span class="hljs-params">(T entry)</span></span>;
+<span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">clear</span><span class="hljs-params">()</span></span>;
+<span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">getCurrentSize</span><span class="hljs-params">()</span></span>;
+</code></pre><hr>
+<h3 id="stack">Stack</h3>
+<hr>
+<h3 id="queue">Queue</h3>
+<ul>
+<li>Waiting line; <strong>FIFO (First In, First Out)</strong></li>
+<li>Can only view the first item</li>
+<li>Additions go to the back</li>
+</ul>
+<p>Interface methods:</p>
+<pre><code><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">enqueue</span><span class="hljs-params">(T entry)</span></span>;
+<span class="hljs-function">T <span class="hljs-title">dequeue</span><span class="hljs-params">()</span></span>;
+<span class="hljs-function">T <span class="hljs-title">getFront</span><span class="hljs-params">()</span></span>;
+<span class="hljs-function"><span class="hljs-keyword">boolean</span> <span class="hljs-title">isEmpty</span><span class="hljs-params">()</span></span>;
+<span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">clear</span><span class="hljs-params">()</span></span>;
+</code></pre><h5 id="implementations">Implementations</h5>
+<p>Can either have linked implementations (nodes) or circular array.</p>
+<ul>
+<li>Linked Implementation<ul>
+<li>Keeps a pointer at the end of the linked list, where new additions are added.<pre><code>  <span class="hljs-keyword">public</span> final <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">LinkedQueue</span>&lt;<span class="hljs-title">T</span>&gt; <span class="hljs-keyword"><span class="hljs-keyword">implements</span> <span class="hljs-type">QueueInterface</span></span>&lt;<span class="hljs-title">T</span>&gt; </span>{
+      ...
+      <span class="hljs-keyword">public</span> void enqueue(T entry) {
+          Node <span class="hljs-keyword">new</span><span class="hljs-type">Node</span> = <span class="hljs-keyword">new</span> <span class="hljs-type">Node</span>(<span class="hljs-keyword">new</span><span class="hljs-type">Entry</span>, <span class="hljs-literal">null</span>);
+          <span class="hljs-keyword">if</span> (firstNode == <span class="hljs-literal">null</span>) {
+              firstNode = <span class="hljs-keyword">new</span><span class="hljs-type">Node</span>;
+          } <span class="hljs-keyword">else</span> {
+              lastNode.next = <span class="hljs-keyword">new</span><span class="hljs-type">Node</span>;
+          }
+          lastNode = <span class="hljs-keyword">new</span><span class="hljs-type">Node</span>;
+      }
+  }
+</code></pre></li>
+<li>Dequeue takes the front node&#39;s data and moves to the next node as the front.<pre><code>  public T dequeue() {
+      //Will <span class="hljs-built_in">throw</span> an exception <span class="hljs-keyword">if</span> there is no item.
+      T <span class="hljs-attr">result</span> = getFront();
+      firstNode.<span class="hljs-attr">data</span> = <span class="hljs-literal">null</span>;
+      <span class="hljs-attr">firstNode</span> = firstNode.next;
+      //If there was only one item, lastNode needs to be updated too.
+      <span class="hljs-keyword">if</span>(<span class="hljs-attr">firstNode</span> == <span class="hljs-literal">null</span>) {
+          <span class="hljs-attr">lastNode</span> = <span class="hljs-literal">null</span>;
+      }
+  }
+</code></pre></li>
+</ul>
+</li>
+<li><p>Circular Array Implementation</p>
+<ul>
+<li>Uses an array with two pointers for the front and back; when the back pointer reaches moves to an index past the last index, circles back to the front.<ul>
+<li>Uses array of size + 1 to solve isEmpty complications.</li>
+</ul>
+</li>
+<li><p>Can use linked list for circular as well.</p>
+<pre><code><span class="hljs-keyword">public</span> final <span class="hljs-keyword">class</span> CircularArrayQueue&lt;T&gt; implements QueueInterface&lt;T&gt; {
+  T[] <span class="hljs-built_in">queue</span>;
+  <span class="hljs-keyword">int</span> frontIndex;
+  <span class="hljs-keyword">int</span> backIndex;
+  boolean integrityOK;
+  final <span class="hljs-keyword">int</span> DEFAULT_CAPACITY = <span class="hljs-number">50</span>;
+  final <span class="hljs-keyword">int</span> MAX_CAP = <span class="hljs-number">10000</span>;
+
+  <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">CircularArrayQueue</span><span class="hljs-params">()</span> </span>{
+      <span class="hljs-keyword">this</span>(DEFAULT_CAP);
+  }
+
+  <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">CircularArrayQueue</span><span class="hljs-params">(<span class="hljs-keyword">int</span> capacity)</span> </span>{
+      <span class="hljs-keyword">if</span> (capacity &gt; MAX_CAP) {
+          <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> RuntimeException(<span class="hljs-string">"Size exceeds max."</span>);
+      } <span class="hljs-keyword">else</span> {
+          integrityOK = <span class="hljs-literal">false</span>;
+          @SuppressWarning(<span class="hljs-string">"unchecked"</span>)
+          T[] tempQueue = (T[]) <span class="hljs-keyword">new</span> Object[capacity + <span class="hljs-number">1</span>];
+          <span class="hljs-built_in">queue</span> = tempQueue;
+          frontIndex = <span class="hljs-number">0</span>;
+          backIndex = <span class="hljs-number">0</span>;
+          integrityOK = <span class="hljs-literal">true</span>;
+      }
+  }
+
+  <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title">checkIntegrity</span><span class="hljs-params">()</span> </span>{
+      <span class="hljs-keyword">if</span> (integrityOK == <span class="hljs-literal">false</span>) {
+          <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> IllegalStateException(<span class="hljs-string">"Queue is corrupt."</span>);
+      }
+  }
+
+  <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">enqueue</span><span class="hljs-params">(T entry)</span> </span>{
+      checkIntegrity();
+      <span class="hljs-keyword">if</span> (<span class="hljs-built_in">queue</span>[frontIndex] == null) {
+          <span class="hljs-built_in">queue</span>[frontIndex] = entry;
+      } <span class="hljs-keyword">else</span> {
+          <span class="hljs-keyword">if</span> (frontIndex == (backIndex + <span class="hljs-number">2</span>) % <span class="hljs-built_in">queue</span>.length) {
+              <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> IllegalStateException(<span class="hljs-string">"Queue is full."</span>);
+          }
+          <span class="hljs-built_in">queue</span>[backIndex] = entry;
+      }
+      backIndex = (backIndex + <span class="hljs-number">1</span>) % <span class="hljs-built_in">queue</span>.length;
+  }
+  <span class="hljs-function"><span class="hljs-keyword">public</span> T <span class="hljs-title">dequeue</span><span class="hljs-params">()</span> </span>{
+      checkIntegrity();
+      <span class="hljs-keyword">if</span> (isEmpty()) {
+          <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> IllegalStateException(<span class="hljs-string">"Queue is empty."</span>);
+      }
+      T result = <span class="hljs-built_in">queue</span>[frontIndex];
+      <span class="hljs-built_in">queue</span>[frontIndex] = null;
+      (frontIndex + <span class="hljs-number">1</span>) % <span class="hljs-built_in">queue</span>.length;
+      <span class="hljs-keyword">return</span> result;
+  }
+
+  <span class="hljs-function"><span class="hljs-keyword">public</span> T <span class="hljs-title">getFront</span><span class="hljs-params">()</span> </span>{
+      <span class="hljs-keyword">return</span> <span class="hljs-built_in">queue</span>[frontIndex];
+  }
+
+  <span class="hljs-function"><span class="hljs-keyword">public</span> boolean <span class="hljs-title">isEmpty</span><span class="hljs-params">()</span> </span>{
+      checkIntegrity();
+      <span class="hljs-keyword">return</span> frontIndex == ((backIndex + <span class="hljs-number">1</span>) % <span class="hljs-built_in">queue</span>.length);
+  }
+
+  <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">clear</span><span class="hljs-params">()</span> </span>{
+      <span class="hljs-keyword">while</span> (!isEmpty()) {
+          dequeue();
+      }
+  }
+
+}
+</code></pre></li>
+</ul>
+</li>
+</ul>
+<h4 id="deque">Deque</h4>
+<ul>
+<li>Double ended queue</li>
+<li>has queue-like operations and stack-like operations</li>
+</ul>
+<p>Interface Methods:</p>
+<pre><code><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">addToFront</span><span class="hljs-params">(T entry)</span></span>;
+<span class="hljs-function">T <span class="hljs-title">removeFront</span><span class="hljs-params">()</span></span>;
+<span class="hljs-function">T <span class="hljs-title">getFront</span><span class="hljs-params">()</span></span>;
+<span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">addToBack</span><span class="hljs-params">(T entry)</span></span>;
+<span class="hljs-function">T <span class="hljs-title">removeBack</span><span class="hljs-params">()</span></span>;
+<span class="hljs-function">T <span class="hljs-title">getBack</span><span class="hljs-params">()</span></span>;
+<span class="hljs-function"><span class="hljs-keyword">boolean</span> <span class="hljs-title">isEmpty</span><span class="hljs-params">()</span></span>;
+<span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">clear</span><span class="hljs-params">()</span></span>;
+</code></pre><h4 id="priority-queue">Priority Queue</h4>
+<ul>
+<li>organizes objects acording to their priorities</li>
+<li>&quot;priority&quot; depends on context/nature of items</li>
+</ul>
+<p>Interface Methods:</p>
+<pre><code><span class="hljs-keyword">void</span> add(T entry)
+<span class="hljs-function">T <span class="hljs-title">remove</span><span class="hljs-params">()</span></span>;
+<span class="hljs-function">T <span class="hljs-title">peek</span><span class="hljs-params">()</span></span>;
+<span class="hljs-function"><span class="hljs-keyword">boolean</span> <span class="hljs-title">isEmpty</span><span class="hljs-params">()</span></span>;
+<span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">getSize</span><span class="hljs-params">()</span></span>;
+<span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">clear</span><span class="hljs-params">()</span></span>;
+</code></pre><h3 id="list">List</h3>
+<h3 id="dictionary">Dictionary</h3>
+<h3 id="tree">Tree</h3>
+<h4 id="binary-search-tree">Binary Search Tree</h4>
+<h4 id="heap">Heap</h4>
+<hr>
+<h2 id="other-concepts">Other Concepts</h2>
+<h3 id="recursion">Recursion</h3>
+<h3 id="iterators">Iterators</h3>
+<h3 id="hashing">Hashing</h3>
